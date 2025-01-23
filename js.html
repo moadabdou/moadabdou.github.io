@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="X.css" rel="stylesheet">
+    <title>PX.com</title>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+
+<body>
+    <h1 class="title">WELCOME TO PROJECT X</h1>
+    <h2><strong><i>Dear Workers</i></strong>, welcome to your favorite website</h2>
+
+    <div class="position">
+        <img id="projectX" src="projx2-removebg-preview.png" width="1000" height="500" class="float-left">
+    </div>
+
+    <script>
+        alert("HELLO USERS");
+    </script>
+
+    <div class="paraImage">
+        <img src="career-opportunities.jpg" width="500" height="500" class="imgleft">
+        <p class="INTRO" lang="en-us">
+            This website was thoughtfully developed by <abbr title="ENSAH STUDENT IN DATA ENGINEERING"><b>ABDELKADER
+                    ANMIRA</b></abbr> with the primary goal of assisting workers,
+            students, and job seekers in finding valuable internships and employment opportunities.
+        </p>
+    </div>
+
+    <br>
+    <h3>HOW TO USE</h3>
+    <ol class="tut">
+        <li> Upload a PDF file containing emails using the "IMPORT EMAILS" button.</li>
+        <li>Upload your resume using the "IMPORT RESUME" button.</li>
+        <li>Click "START SENDING" to send your resume to the uploaded email list.</li>
+    </ol>
+
+    <div class="pos">
+        <img id="projectX2" src="green-background-designify (1).png" width="1000" height="500">
+    </div>
+
+    <div class="links-container">
+        <a class="api" href="https://developers.google.com/gmail/api">ENTER YOUR EMAIL FIRST</a>
+        <a class="email" href="mailto:abdelkaderanmira4@gmail.com">EMAIL join</a>
+        <a class="newblanket" href="https://chatgpt.com/?sso=" target="_blank">CHATGPT HELP</a>
+    </div>
+    <br>
+    <div class="auth-container">
+        <button id="login-button" class="auth-button">Login with Gmail</button>
+    </div>
+    <fieldset>
+        <legend>INFORMATIONS TO UPLOAD</legend>
+        <div class="button-container">
+            <form method="post">
+                <p class="Importpdf">Upload the PDF containing emails</p>
+                <input type="file" name="emails_pdf" class="mails"><br>
+                <p class="Importcv">IMPORT THE RESUME</p>
+                <input type="file" name="resume_pdf" class="cv"><br>
+                <br>
+                <input type="text" name="name" placeholder="Your name" class="contact-input" required>
+                <button id="start-button" class="buttonstart" onclick="handleStartButtonClick(event)"><img
+                        src="start-removebg-preview.png" width="500" height="500"></button>
+            </form>
+        </div>
+    </fieldset>
+
+    <br>
+    <h2 class="cont">CONTACT INFORMATIONS FOR SUPPORT </h2>
+    <div class="contact_info">
+        <table cellpadding="10" cellspacing="5">
+            <tr>
+                <th>personal email : </th>
+                <th>nmiraabdellader@gmail.com</th>
+            </tr>
+            <tr>
+                <th>instagram :</th>
+                <th><a href="https://www.instagram.com/abdo_nm2?igsh=MW05NnFpZ21zdm9obA==" target="_blank">Instagram</a>
+                </th>
+            </tr>
+            <tr>
+                <th>FACEBOOK :</th>
+                <th><a href="https://www.facebook.com/share/1KWmgLqBsV/" target="_blank">Facebook</a></th>
+            </tr>
+            <tr>
+                <th>WHATSAPP NUMBER :</th>
+                <th>0651191581</th>
+            </tr>
+            <tr>
+                <td>LinkedIn</td>
+                <td><a href="https://www.linkedin.com/in/abdelkader-anmira-486676279?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+                        target="_blank">LinkedIn link</a></td>
+            </tr>
+        </table>
+    </div>
+
+
+
+
+
+
+    <script>
+        // Gmail API OAuth variables
+        const CLIENT_ID = "722797867951-2blu5kuu4k98esa1vabpf9sabdcu5v9b.apps.googleusercontent.com"; // Replace with your actual CLIENT_ID
+        const SCOPES = 'openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/gmail.send';
+
+        // Load the API and initialize the client
+        function handleClientLoad() {
+            gapi.load('client:auth2', initClient);
+        }
+
+        function initClient() {
+            gapi.client.init({
+                clientId: CLIENT_ID,
+                scope: SCOPES,
+                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"]
+            }).then(() => {
+                console.log("Google API initialized successfully.");
+            }).catch((error) => {
+                console.error("Error initializing Google API client: ", error);
+            });
+        }
+
+        // Handle Gmail Login
+        function handleLogin() {
+            gapi.auth2.getAuthInstance().signIn().then((googleUser) => {
+                const authResponse = googleUser.getAuthResponse();
+                const accessToken = authResponse.access_token;
+                const idToken = authResponse.id_token; // Placeholder for ID token
+
+                console.log('User signed in: ', googleUser);
+                console.log('Access Token: ', accessToken);
+                console.log('ID Token: ', idToken); // You may need to handle ID token separately
+
+                alert('Successfully signed in! You can now use the platform.');
+                document.getElementById('start-button').disabled = false; // Enable the "Start Sending" button
+
+                // Store tokens for backend use
+                storeTokens(accessToken, idToken);
+            }).catch((error) => {
+                console.error("Sign-in failed: ", error);
+                alert('Sign-in failed. Please try again.');
+            });
+        }
+
+        function storeTokens(accessToken, idToken) {
+            fetch('/store_tokens', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ access_token: accessToken, id_token: idToken })
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Tokens stored successfully.');
+                } else {
+                    console.error('Failed to store tokens.');
+                }
+            }).catch(error => {
+                console.error('Error storing tokens: ', error);
+            });
+        }
+
+        // Attach event listeners
+        document.body.onload = handleClientLoad;
+        document.getElementById('login-button').addEventListener('click', handleLogin);
+    </script>
+</body>
+
+</html>
